@@ -3,26 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My First Website</title>
+    <title>My Beautiful Website</title>
     <style>
+        /* General Styles */
         body {
             font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
             text-align: center;
-            background-color: #f4f4f4;
-            margin: 0;
             padding: 50px;
+            margin: 0;
         }
+
         h1 {
-            color: #333;
+            font-size: 3em;
+            animation: fadeIn 2s ease-in-out;
         }
+
         p {
-            font-size: 18px;
-            color: #555;
+            font-size: 1.5em;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            animation: slideIn 1.5s ease-in-out;
+        }
+
+        /* Button Styling */
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            color: white;
+            background: #ff4081;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #e91e63;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to My First Website</h1>
-    <p>This is my first webpage hosted on GitHub Pages!</p>
+    <h1>Welcome to My Beautiful Website</h1>
+    <p>This is my first stylish webpage hosted on GitHub Pages! 🎨✨</p>
+    <br>
+    <button class="btn" onclick="alert('Thank you for visiting! 😊')">Click Me!</button>
 </body>
 </html>
