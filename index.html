@@ -60,12 +60,12 @@
     </style>
 </head>
 <body>
-   <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Beautiful Website</title>
+    <title>Interactive 3D Cube</title>
     <style>
         /* General Styles */
         body {
@@ -79,23 +79,13 @@
 
         h1 {
             font-size: 3em;
-            animation: fadeIn 2s ease-in-out;
-        }
-
-        p {
-            font-size: 1.5em;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            display: inline-block;
-            animation: slideIn 1.5s ease-in-out;
         }
 
         /* 3D Cube Container */
         .cube-container {
             width: 200px;
             height: 200px;
-            perspective: 600px;
+            perspective: 800px;
             margin: 50px auto;
         }
 
@@ -104,20 +94,21 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            animation: rotateCube 5s infinite linear;
+            transition: transform 0.2s;
         }
 
         .face {
             position: absolute;
             width: 200px;
             height: 200px;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.8);
             border: 2px solid #fff;
             text-align: center;
             line-height: 200px;
             font-size: 24px;
             font-weight: bold;
             color: #333;
+            border-radius: 20px; /* Smooth corners */
         }
 
         /* Positioning Cube Faces */
@@ -128,20 +119,15 @@
         .top    { transform: rotateX(90deg) translateZ(100px); }
         .bottom { transform: rotateX(-90deg) translateZ(100px); }
 
-        /* Cube Rotation Animation */
-        @keyframes rotateCube {
-            from { transform: rotateX(0) rotateY(0); }
-            to { transform: rotateX(360deg) rotateY(360deg); }
-        }
     </style>
 </head>
 <body>
-    <h1>Welcome to My Beautiful Website</h1>
-    <p>This is my first stylish webpage hosted on GitHub Pages! 🎨✨</p>
+    <h1>Interactive 3D Cube</h1>
+    <p>Click and drag the cube to rotate it! 🎲</p>
 
     <!-- 3D Cube -->
     <div class="cube-container">
-        <div class="cube">
+        <div class="cube" id="cube">
             <div class="face front">Front</div>
             <div class="face back">Back</div>
             <div class="face right">Right</div>
@@ -150,6 +136,33 @@
             <div class="face bottom">Bottom</div>
         </div>
     </div>
+
+    <script>
+        let cube = document.getElementById('cube');
+        let isDragging = false;
+        let startX, startY, currentX = 0, currentY = 0;
+
+        document.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            let dx = e.clientX - startX;
+            let dy = e.clientY - startY;
+            currentX += dx * 0.5;
+            currentY -= dy * 0.5;
+            cube.style.transform = `rotateX(${currentY}deg) rotateY(${currentX}deg)`;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+    </script>
 </body>
 </html>
 </body>
