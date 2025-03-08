@@ -3,162 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Beautiful Website</title>
+    <title>Interactive 3D Eiffel Tower</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        /* General Styles */
+        /* General Page Styling */
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            text-align: center;
-            padding: 50px;
             margin: 0;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        h1 {
-            font-size: 3em;
-            animation: fadeIn 2s ease-in-out;
-        }
-
-        p {
-            font-size: 1.5em;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            display: inline-block;
-            animation: slideIn 1.5s ease-in-out;
-        }
-
-        /* Button Styling */
-        .btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 1.2em;
-            color: white;
-            background: #ff4081;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            background: #e91e63;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
+        canvas {
+            display: block;
         }
     </style>
 </head>
 <body>
-   <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive 3D Cube</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            text-align: center;
-            padding: 50px;
-            margin: 0;
-        }
-
-        h1 {
-            font-size: 3em;
-        }
-
-        /* 3D Cube Container */
-        .cube-container {
-            width: 200px;
-            height: 200px;
-            perspective: 800px;
-            margin: 50px auto;
-        }
-
-        .cube {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.2s;
-        }
-
-        .face {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            background: #ff6600; /* Solid Color (Orange) */
-            border-radius: 20px; /* Smooth corners */
-            border: 2px solid #fff;
-        }
-
-        /* Positioning Cube Faces */
-        .front  { transform: translateZ(100px); }
-        .back   { transform: rotateY(180deg) translateZ(100px); }
-        .right  { transform: rotateY(90deg) translateZ(100px); }
-        .left   { transform: rotateY(-90deg) translateZ(100px); }
-        .top    { transform: rotateX(90deg) translateZ(100px); }
-        .bottom { transform: rotateX(-90deg) translateZ(100px); }
-
-    </style>
-</head>
-<body>
-    <h1>Interactive 3D Cube</h1>
-    <p>Click and drag the cube to rotate it! 🎲</p>
-
-    <!-- 3D Cube -->
-    <div class="cube-container">
-        <div class="cube" id="cube">
-            <div class="face front"></div>
-            <div class="face back"></div>
-            <div class="face right"></div>
-            <div class="face left"></div>
-            <div class="face top"></div>
-            <div class="face bottom"></div>
-        </div>
-    </div>
-
     <script>
-        let cube = document.getElementById('cube');
-        let isDragging = false;
-        let startX, startY, currentX = 0, currentY = 0;
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
 
-        document.addEventListener('mousedown', (e) => {
+        // Eiffel Tower Geometry (Simplified)
+        const geometry = new THREE.ConeGeometry(2, 6, 20, 20, true);
+        const material = new THREE.MeshStandardMaterial({ color: 0x8B5A2B, metalness: 0.7, roughness: 0.3 });
+        const tower = new THREE.Mesh(geometry, material);
+        scene.add(tower);
+
+        // Lighting
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 5, 5).normalize();
+        scene.add(light);
+
+        // Camera Position
+        camera.position.z = 10;
+
+        // Mouse Controls
+        let isDragging = false, previousMousePosition = { x: 0, y: 0 };
+
+        document.addEventListener("mousedown", (event) => {
             isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
+            previousMousePosition.x = event.clientX;
+            previousMousePosition.y = event.clientY;
         });
 
-        document.addEventListener('mousemove', (e) => {
+        document.addEventListener("mousemove", (event) => {
             if (!isDragging) return;
-            let dx = e.clientX - startX;
-            let dy = e.clientY - startY;
-            currentX += dx * 0.5;
-            currentY -= dy * 0.5;
-            cube.style.transform = `rotateX(${currentY}deg) rotateY(${currentX}deg)`;
-            startX = e.clientX;
-            startY = e.clientY;
+            const deltaX = event.clientX - previousMousePosition.x;
+            const deltaY = event.clientY - previousMousePosition.y;
+            tower.rotation.y += deltaX * 0.01;
+            tower.rotation.x += deltaY * 0.01;
+            previousMousePosition.x = event.clientX;
+            previousMousePosition.y = event.clientY;
         });
 
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
+        document.addEventListener("mouseup", () => isDragging = false);
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Adjust for Screen Resize
+        window.addEventListener("resize", () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
-</body>
-</html>
 </body>
 </html>
