@@ -3,82 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive 3D Eiffel Tower</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>Play XOX Game</title>
     <style>
-        /* General Page Styling */
         body {
             margin: 0;
+            font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
+            text-align: center;
         }
 
-        canvas {
-            display: block;
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #playButton {
+            font-size: 24px;
+            padding: 15px 30px;
+            background-color: #ff6600;
+            border: none;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #playButton:hover {
+            background-color: #ff4500;
+        }
+
+        /* XOX Game */
+        .game-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            background: white;
+            color: black;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background: #ddd;
+        }
+
+        #reset {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            background: red;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #reset:hover {
+            background: darkred;
         }
     </style>
 </head>
 <body>
+
+    <!-- Landing Page -->
+    <div class="container" id="home">
+        <h1>Welcome to XOX Game</h1>
+        <button id="playButton">Play</button>
+    </div>
+
+    <!-- XOX Game -->
+    <div class="game-container" id="game">
+        <h1>Tic-Tac-Toe</h1>
+        <div class="grid" id="grid">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        <button id="reset">Restart</button>
+    </div>
+
     <script>
-        // Scene setup
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
-        // Eiffel Tower Geometry (Simplified)
-        const geometry = new THREE.ConeGeometry(2, 6, 20, 20, true);
-        const material = new THREE.MeshStandardMaterial({ color: 0x8B5A2B, metalness: 0.7, roughness: 0.3 });
-        const tower = new THREE.Mesh(geometry, material);
-        scene.add(tower);
-
-        // Lighting
-        const light = new THREE.DirectionalLight(0xffffff, 1);
-        light.position.set(5, 5, 5).normalize();
-        scene.add(light);
-
-        // Camera Position
-        camera.position.z = 10;
-
-        // Mouse Controls
-        let isDragging = false, previousMousePosition = { x: 0, y: 0 };
-
-        document.addEventListener("mousedown", (event) => {
-            isDragging = true;
-            previousMousePosition.x = event.clientX;
-            previousMousePosition.y = event.clientY;
+        // Show Game on Button Click
+        document.getElementById("playButton").addEventListener("click", function() {
+            document.getElementById("home").style.display = "none";
+            document.getElementById("game").style.display = "flex";
         });
 
-        document.addEventListener("mousemove", (event) => {
-            if (!isDragging) return;
-            const deltaX = event.clientX - previousMousePosition.x;
-            const deltaY = event.clientY - previousMousePosition.y;
-            tower.rotation.y += deltaX * 0.01;
-            tower.rotation.x += deltaY * 0.01;
-            previousMousePosition.x = event.clientX;
-            previousMousePosition.y = event.clientY;
-        });
+        // XOX Game Logic
+        const cells = document.querySelectorAll(".cell");
+        let currentPlayer = "X";
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let gameActive = true;
 
-        document.addEventListener("mouseup", () => isDragging = false);
+        function checkWinner() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+                [0, 4, 8], [2, 4, 6] 
+            ];
 
-        // Animation Loop
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    gameActive = false;
+                    setTimeout(() => alert(`${board[a]} Wins!`), 200);
+                    return;
+                }
+            }
+
+            if (!board.includes("")) {
+                gameActive = false;
+                setTimeout(() => alert("It's a Tie!"), 200);
+            }
         }
-        animate();
 
-        // Adjust for Screen Resize
-        window.addEventListener("resize", () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+        cells.forEach(cell => {
+            cell.addEventListener("click", () => {
+                const index = cell.dataset.index;
+                if (board[index] || !gameActive) return;
+
+                board[index] = currentPlayer;
+                cell.textContent = currentPlayer;
+                checkWinner();
+                currentPlayer = currentPlayer === "X" ? "O" : "X";
+            });
+        });
+
+        document.getElementById("reset").addEventListener("click", () => {
+            board.fill("");
+            cells.forEach(cell => cell.textContent = "");
+            gameActive = true;
+            currentPlayer = "X";
         });
     </script>
+
 </body>
 </html>
