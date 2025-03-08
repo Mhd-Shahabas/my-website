@@ -49,5 +49,45 @@
             position: absolute;
             width: 200px;
             height: 200px;
-            background
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid #fff;
+            text-align: center;
+            line-height: 200px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Positioning Cube Faces */
+        .front  { transform: translateZ(100px); }
+        .back   { transform: rotateY(180deg) translateZ(100px); }
+        .right  { transform: rotateY(90deg) translateZ(100px); }
+        .left   { transform: rotateY(-90deg) translateZ(100px); }
+        .top    { transform: rotateX(90deg) translateZ(100px); }
+        .bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+        /* Cube Rotation Animation */
+        @keyframes rotateCube {
+            from { transform: rotateX(0) rotateY(0); }
+            to { transform: rotateX(360deg) rotateY(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My Beautiful Website</h1>
+    <p>This is my first stylish webpage hosted on GitHub Pages! 🎨✨</p>
+
+    <!-- 3D Cube -->
+    <div class="cube-container">
+        <div class="cube">
+            <div class="face front">Front</div>
+            <div class="face back">Back</div>
+            <div class="face right">Right</div>
+            <div class="face left">Left</div>
+            <div class="face top">Top</div>
+            <div class="face bottom">Bottom</div>
+        </div>
+    </div>
+</body>
+</html>
 
